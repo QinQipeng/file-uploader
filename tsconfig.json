@@ -2,12 +2,18 @@
   "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
+    "sourceRoot": "./src",
     "sourceMap": true,
     "declaration": true,
     "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
+    // Prisma ORM options
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "ignoreDeprecations": "6.0",
+    "lib": ["esnext"],
   },
-  "include": ["src/**/*"],
+  "include": ["./**/*"],
   "exclude": ["node_modules", "dist"]
 }
