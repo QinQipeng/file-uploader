@@ -15,6 +15,16 @@ datasource db {
 model Session {
   id        String   @id
   sid       String   @unique
-  data      String   @db.Text  // MediumText may be needed for MySql
-  expiresAt   DateTime
+  data      String   @db.Text // MediumText may be needed for MySql
+  expiresAt DateTime
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  email     String   @unique
+  password  String   @map("hashed_pwd")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz() @updatedAt
 }

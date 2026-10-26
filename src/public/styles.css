@@ -1,0 +1,14 @@
+.loginForm,
+.signupForm {
+  display: flex;
+  max-width: 20rem;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.loginForm div,
+.signupForm div {
+  display: flex;
+  justify-content: space-between;
+}
