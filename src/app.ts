@@ -1,14 +1,15 @@
 import "./auth/passport.ts";
 import path from "node:path";
-import express, { NextFunction } from "express";
 import passport from "passport";
 import flash from "connect-flash";
 import session from "express-session";
 import { prisma } from "./lib/prisma";
 import { randomBytes } from "node:crypto";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import express, { type Request, type Response, type NextFunction } from "express";
 
 import userRouter from "./routers/userRouter";
+import fileRouter from "./routers/fileRouter.ts";
 
 const app = express();
 
@@ -40,7 +41,15 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(flash());
-app.use("/", userRouter);
+app.use(userRouter);
+app.use("/file", fileRouter)
+app.get("/", (req: Request, res: Response) => {
+  if (!req.user) {
+    res.redirect("/login");
+    return;
+  }
+  res.render("index", {user: req.user});
+});
 
 const PORT = 8333;
 app.listen(PORT, (error) => {
