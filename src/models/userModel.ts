@@ -13,24 +13,28 @@ class UserModel {
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.db.user.findUnique({
+    return await this.db.user.findUnique({
       where: { email: email }
     })
-    return user
   }
 
   async getUserById(id: string): Promise<User | null> {
-    const user = await this.db.user.findUnique({
+    return await this.db.user.findUnique({
       where: { id: id }
     })
-    return user
   }
 
   async createUser(user: NewUser): Promise<void> {
     try {
       await prisma.user.create({
         data: {
-          ...user
+          ...user,
+          root: {
+            create: {
+              name: `${user.firstName}'s Folder`,
+              isRoot: true
+            }
+          }
         }
       })
     } catch (err: DatabaseError | Error | unknown) {
