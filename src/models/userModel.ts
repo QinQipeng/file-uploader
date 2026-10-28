@@ -1,12 +1,12 @@
 import { PrismaClient } from "../../generated/prisma/client"
 import { DatabaseError } from "pg";
 import { prisma } from "../lib/prisma"
-import { User } from "../../generated/prisma/client"
+import { User } from "../../generated/prisma/client";
 
 type NewUser = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
 
 class UserModel {
-  db: PrismaClient
+  private readonly db: PrismaClient
 
   constructor() {
     this.db = prisma
@@ -14,13 +14,15 @@ class UserModel {
 
   async getUserByEmail(email: string): Promise<User | null> {
     return await this.db.user.findUnique({
-      where: { email: email }
+      where: { email: email },
+      include: { root: true }
     })
   }
 
   async getUserById(id: string): Promise<User | null> {
     return await this.db.user.findUnique({
-      where: { id: id }
+      where: { id: id },
+      include: { root: true }
     })
   }
 
