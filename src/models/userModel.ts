@@ -22,7 +22,11 @@ class UserModel {
   async getUserById(id: string): Promise<User | null> {
     return await this.db.user.findUnique({
       where: { id: id },
-      include: { root: true }
+      include: { root: {
+        include: {
+          children: true
+        }
+      }}
     })
   }
 
@@ -33,7 +37,7 @@ class UserModel {
           ...user,
           root: {
             create: {
-              name: `${user.firstName}'s Folder`,
+              name: `${user.firstName}'s Root Folder`,
               isRoot: true
             }
           }

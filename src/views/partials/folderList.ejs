@@ -1,3 +1,13 @@
 <div>
   <h3>Current Folder: <%= folder.name %></h3>
+  <ul>
+    <% folder.children.forEach((child) => {%>
+      <li>
+        <a href="/folder/<%= child.id %>"><%= child.name %></a>
+      </li>
+    <%})%>
+  </ul>
+  <% if (folder.parentId) { %>
+    <a href="/folder/<%= child.parentId %>">Back To Parent</a>
+  <%}%>
 </div>

@@ -45,14 +45,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 app.use("/", userRouter);
 app.use("/file", fileRouter);
-app.use("folder", folderRouter)
+app.use("/folder", folderRouter)
 
 app.get("/", (req: Request, res: Response) => {
   if (!req.user) {
     res.redirect("/login");
     return;
   }
-  const user = req.user as User & { root: Folder[] }
+  const user = req.user as User & { root: Folder }
+  console.log(user.root)
   res.render("index", { user: user, currFolder: user.root });
 });
 

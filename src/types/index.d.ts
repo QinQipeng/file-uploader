@@ -1,7 +1,7 @@
 import { User, Folder } from "../../generated/prisma/client";
 import { Request } from 'express';
 
-export type UserWithRoot = User & { root: Folder[] }
+export type UserWithRoot = User & { root: Folder }
 
 declare global {
   namespace Express {
