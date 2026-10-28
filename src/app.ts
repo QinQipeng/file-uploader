@@ -10,6 +10,8 @@ import express, { type Request, type Response, type NextFunction } from "express
 
 import userRouter from "./routers/userRouter";
 import fileRouter from "./routers/fileRouter.ts";
+import folderRouter from "./routers/folderRouter.ts";
+import { Folder, User } from "../generated/prisma/client.ts";
 
 const app = express();
 
@@ -41,14 +43,17 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(flash());
-app.use(userRouter);
-app.use("/file", fileRouter)
+app.use("/", userRouter);
+app.use("/file", fileRouter);
+app.use("folder", folderRouter)
+
 app.get("/", (req: Request, res: Response) => {
   if (!req.user) {
     res.redirect("/login");
     return;
   }
-  res.render("index", {user: req.user});
+  const user = req.user as User & { root: Folder[] }
+  res.render("index", { user: user, currFolder: user.root });
 });
 
 const PORT = 8333;
