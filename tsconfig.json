@@ -13,6 +13,8 @@
     "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0",
     "lib": ["esnext"],
+    // Type Roots
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["./**/*"],
   "exclude": ["node_modules", "dist"]

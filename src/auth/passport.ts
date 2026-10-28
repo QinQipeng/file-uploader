@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local"
 import bcrypt from "bcryptjs"
 import userModel from "../models/userModel"
 import { User } from "../../generated/prisma/client"
+import { UserWithRoot } from "../types"
 
 const authenErrorMsg = "Authenticating Failed: Invalid User Email or Password";
 const customFields = {
@@ -22,14 +23,14 @@ const verifyCallback = async (
 
     const isValid = await bcrypt.compare(password, String(user.password))
     return isValid
-      ? done(null, user)
+      ? done(null, user as UserWithRoot)
       : done(null, false, { message: authenErrorMsg });
   } catch (err) {
     return done(err)
   }
 }
 
-passport.serializeUser((user: User | any, done) => {
+passport.serializeUser((user: UserWithRoot | any, done) => {
   done(null, user.id);
 });
 
@@ -40,7 +41,7 @@ passport.deserializeUser(async (id, done) => {
       return done(null, false);
     }
 
-    done(null, user)
+    done(null, user as UserWithRoot)
   } catch (err) {
     done(err);
   }
