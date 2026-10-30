@@ -22,20 +22,16 @@ class FolderModel {
 
   async getFolderById(id: string): Promise<Folder | null> {
     return await this.repo.findUnique({
-      where: {id: id},
-      include: {
-        children: true
-      }
+      where: { id: id },
+      include: { children: true }
     })
   }
 
   async getFoldersByName(name: string, userId: string | undefined): Promise<Folder[] | null> {
     if (userId === undefined) return []
     return await this.repo.findMany({
-      where: { name: { contains: name, mode: "insensitive" }, ownerId: userId},
-      include: {
-        children: true
-      }
+      include: { children: true },
+      where: { name: { contains: name, mode: "insensitive" }, ownerId: userId}
     })
   }
 
