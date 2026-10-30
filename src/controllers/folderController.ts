@@ -26,14 +26,14 @@ async function queryFolderGet(
 }
 
 async function renameFolderPost(
-  req: Request<any, any, { name: string }>,
+  req: Request<any, any, { newName: string }>,
   res: Response,
   next: NextFunction,
 ) {
-  const newName = req.body.name;
+  const newName = req.body.newName;
   const id = req.params.id as string;
   await folderModel.renameFolder(id, newName);
-  res.redirect(`/${id}`);
+  res.redirect(`/folder/${id}`);
 }
 
 async function addFolderPost(
@@ -44,7 +44,7 @@ async function addFolderPost(
   const newFolder = { name: req.body.newName, ownerId: req.user?.id as string };
   const id = req.params.id as string;
   await folderModel.createNewFolder(id, newFolder);
-  res.redirect(`/${id}`);
+  res.redirect(`/folder/${id}`);
 }
 
 async function deleteFolderPost(
@@ -54,7 +54,7 @@ async function deleteFolderPost(
 ) {
   const { parentId, childId } = req.params;
   await folderModel.deleteFolder(childId);
-  res.redirect(`/${parentId}`);
+  res.redirect(`/folder/${parentId}`);
 }
 
 export default {
