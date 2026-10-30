@@ -1,13 +1,49 @@
 <div>
-  <h3>Current Folder: <%= folder.name %></h3>
-  <ul>
-    <% folder.children.forEach((child) => {%>
-      <li>
-        <a href="/folder/<%= child.id %>"><%= child.name %></a>
-      </li>
-    <%})%>
+  <form class="titleForm" action="/folder/<%= folder.id %>" method="post">
+    <h3 class="title">Current Folder: <span><%= folder.name %></span></h3>
+    <input hidden type="text" name="newName" value="<%= folder.name %>">
+  </form>
+  <ul id="currDir">
+    <% if (!folder.isRoot) { %>
+      <li><a href="/folder/<%= folder.parentId %>">../</a></li>
+    <% } %>
+    <% folder.children.forEach((child) => { %>
+      <li><a href="/folder/<%= child.id %>"><%= child.name %></a></li>
+    <% }) %>
   </ul>
-  <% if (folder.parentId) { %>
-    <a href="/folder/<%= child.parentId %>">Back To Parent</a>
-  <%}%>
+  <button class="addFolder">Add Folder</button>
+  <button><a href="/">Back Home</a></button>
 </div>
+<script>
+  const addButon = document.querySelector(".addFolder");
+  const dirDisplay = document.querySelector("#currDir");
+  const folderSpan = document.querySelector("h3.title span");
+  const titleForm = document.querySelector(".titleForm");
+  const newNameInput = document.querySelector('input[name="newName"]');
+  
+  addButon.addEventListener("click", async (event) => {
+    event.preventDefault();
+    try {
+      const folderId = "<%= folder.id %>";
+      const rawTemplate = `<li><%- include('folderForm'); %></li>`;
+
+      dirDisplay.insertAdjacentHTML("beforeend", rawTemplate);
+    } catch (error) {
+      console.error('Error rendering template:', error);
+    }
+  })
+
+  document.addEventListener("click", () => {
+    folderSpan.hidden = false;
+    newNameInput.hidden = true;
+  })
+
+  folderSpan.addEventListener("click", () => {
+    folderSpan.hidden = true;
+    newNameInput.hidden = false;
+    newNameInput.focus()
+    event.stopPropagation();
+  })
+
+
+</script>
