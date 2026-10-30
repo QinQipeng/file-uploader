@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+  previewFeatures = ["partialIndexes"]
 }
 
 datasource db {
@@ -22,16 +23,19 @@ model User {
   password  String   @map("hashed_pwd")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  root      Folder?
+  folders   Folder[]
 }
 
 model Folder {
   id       String   @id @default(uuid()) @db.Uuid
   name     String
-  ownerId  String   @unique @map("owner_id") @db.Uuid
+  ownerId  String   @map("owner_id") @db.Uuid
   parentId String?  @map("parent_id") @db.Uuid
   isRoot   Boolean  @default(false) @map("is_root")
   owner    User     @relation(fields: [ownerId], references: [id])
   parent   Folder?  @relation("NestedFolder", fields: [parentId], references: [id], onDelete: Cascade)
   children Folder[] @relation("NestedFolder")
+
+  @@unique([ownerId, isRoot], where: raw("(is_root = true)"))
+  @@index([ownerId, isRoot], where: raw("(is_root = true)"))
 }

@@ -12,6 +12,7 @@ import userRouter from "./routers/userRouter";
 import fileRouter from "./routers/fileRouter.ts";
 import folderRouter from "./routers/folderRouter.ts";
 import { Folder, User } from "../generated/prisma/client.ts";
+import { UserWithFolder } from "./types/index";
 
 const app = express();
 
@@ -52,9 +53,8 @@ app.get("/", (req: Request, res: Response) => {
     res.redirect("/login");
     return;
   }
-  const user = req.user as User & { root: Folder }
-  console.log(user.root)
-  res.render("index", { user: user, currFolder: user.root });
+  const user = req.user as UserWithFolder
+  res.render("index", { user: user, currFolder: user.folders[0] });
 });
 
 const PORT = 8333;
