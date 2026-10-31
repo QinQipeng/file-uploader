@@ -61,7 +61,7 @@ class FolderModel {
 
   async deleteFolder(folderId: string) {
     try {
-      await this.repo.delete({
+      return await this.repo.delete({
         where: { id: folderId}
       })
     } catch (err: DatabaseError | Error | unknown) {

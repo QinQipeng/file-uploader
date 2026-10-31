@@ -48,12 +48,15 @@ async function addFolderPost(
 }
 
 async function deleteFolderPost(
-  req: Request<{ parentId: string; childId: string }>,
+  req: Request<{ id: string }>,
   res: Response,
   next: NextFunction,
 ) {
-  const { parentId, childId } = req.params;
-  await folderModel.deleteFolder(childId);
+  const { id } = req.params;
+  if ((await folderModel.getFolderById(id))?.isRoot)
+    throw new Error("Error: Deletion on Root Folder is Prohibited")
+  
+  const { parentId } = await folderModel.deleteFolder(id);
   res.redirect(`/folder/${parentId}`);
 }
 

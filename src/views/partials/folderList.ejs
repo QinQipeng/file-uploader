@@ -11,6 +11,16 @@
       <li><a href="/folder/<%= child.id %>"><%= child.name %></a></li>
     <% }) %>
   </ul>
+    <% if (!folder.isRoot) { %>
+      <form action="/folder/<%= folder.id %>/delete" method="post">
+        <button
+          type="submit"
+          onclick="return confirm('WARNING: Deleting the folder will delete all the artifacts under it. This is NOT recoverable. Sure to delete?');"
+        >
+          Delete
+        </button>
+      </form>
+    <% } %>
   <button class="addFolder">Add Folder</button>
   <button><a href="/">Back Home</a></button>
 </div>
