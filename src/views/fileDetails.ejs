@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= fileInfo.name %></title>
+  </head>
+  <body>
+    <% if (locals.fileInfo) { %>
+    <h1>File Information</h1>
+    <ul>
+      <li>Name: <%= fileInfo.name %></li>
+      <li>File Suffix: <%= fileInfo.suffix %></li>
+      <li>Size (Byte): <%= fileInfo.size %></li>
+      <li>Owner: <%= ownerName %></li>
+    </ul>
+    <form action="/file/<%= fileInfo.id %>/download" method="get">
+      <button type="submit">Download</button>
+    </form>
+    <form action="/file/<%= fileInfo.id %>/delete" method="post">
+      <button
+        type="submit"
+        onclick="
+          return confirm(
+            'WARNING: Deleting this file is NOT recoverable. Sure to delete?',
+          );
+        "
+      >
+        Delete
+      </button>
+    </form>
+    <button>
+      <a href="/folder/<%= fileInfo.folderId %>">Back to Folder</a>
+    </button>
+    <% } else { %>
+      <h1>Error: Failed to fetch file information</h1>
+      <a href="/">Back to Home</a>
+    <% } %>
+  </body>
+</html>

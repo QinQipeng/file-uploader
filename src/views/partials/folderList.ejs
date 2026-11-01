@@ -8,7 +8,10 @@
       <li><a href="/folder/<%= folder.parentId %>">../</a></li>
     <% } %>
     <% folder.children.forEach((child) => { %>
-      <li><a href="/folder/<%= child.id %>"><%= child.name %></a></li>
+      <li><a href="/folder/<%= child.id %>">/<%= child.name %></a></li>
+    <% }) %>
+    <% folder.files.forEach((file) => { %>
+      <li><a href="/file/<%= file.id %>"><%= file.name %></a></li>
     <% }) %>
   </ul>
     <% if (!folder.isRoot) { %>
