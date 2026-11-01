@@ -23,14 +23,14 @@ class FolderModel {
   async getFolderById(id: string): Promise<Folder | null> {
     return await this.repo.findUnique({
       where: { id: id },
-      include: { children: true }
+      include: { children: true, files: true }
     })
   }
 
   async getFoldersByName(name: string, userId: string | undefined): Promise<Folder[] | null> {
     if (userId === undefined) return []
     return await this.repo.findMany({
-      include: { children: true },
+      include: { children: true, files: true },
       where: { name: { contains: name, mode: "insensitive" }, ownerId: userId}
     })
   }
@@ -59,10 +59,10 @@ class FolderModel {
     } 
   }
 
-  async deleteFolder(folderId: string) {
+  async deleteFolder(folderId: string): Promise<Folder> {
     try {
       return await this.repo.delete({
-        where: { id: folderId}
+        where: { id: folderId }
       })
     } catch (err: DatabaseError | Error | unknown) {
       throw new Error(String(err))

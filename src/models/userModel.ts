@@ -17,7 +17,7 @@ class UserModel {
       where: { email: email },
       include: {
         folders: {
-          include: { children: true },
+          include: { children: true, files: true },
           where: { isRoot: true },
         },
       },
@@ -29,7 +29,7 @@ class UserModel {
       where: { id: id },
       include: {
         folders: {
-          include: { children: true },
+          include: { children: true, files: true },
           where: { isRoot: true },
         },
       },
