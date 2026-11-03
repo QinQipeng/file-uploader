@@ -1,8 +1,23 @@
 <div>
-  <form class="titleForm" action="/folder/<%= folder.id %>" method="post">
-    <h3 class="title">Current Folder: <span><%= folder.name %></span></h3>
-    <input hidden type="text" name="newName" value="<%= folder.name %>">
+  <form action="/folder/<%= folder.id %>" method="post">
+    <div class="folderRename">
+      <h3 class="title">Current Folder: <span><%= folder.name %></span></h3>
+      <input type="text" name="newName" value="<%= folder.name %>" hidden />
+    </div>
   </form>
+  <div class="folderButtons">
+    <button class="addFolder">Add Folder</button>
+    <% if (!folder.isRoot) { %>
+      <form action="/folder/<%= folder.id %>/delete" method="post">
+        <button
+          type="submit"
+          onclick="return confirm('WARNING: Deleting the folder will delete all files/folders under it. This is NOT recoverable. Sure to delete?');"
+        >
+          Delete This Folder
+        </button>
+      </form>
+    <% } %>
+  </div>
   <ul id="currDir">
     <% if (!folder.isRoot) { %>
       <li><a href="/folder/<%= folder.parentId %>">../</a></li>
@@ -14,33 +29,26 @@
       <li><a href="/file/<%= file.id %>"><%= file.name %></a></li>
     <% }) %>
   </ul>
-    <% if (!folder.isRoot) { %>
-      <form action="/folder/<%= folder.id %>/delete" method="post">
-        <button
-          type="submit"
-          onclick="return confirm('WARNING: Deleting the folder will delete all the artifacts under it. This is NOT recoverable. Sure to delete?');"
-        >
-          Delete
-        </button>
-      </form>
-    <% } %>
-  <button class="addFolder">Add Folder</button>
-  <button><a href="/">Back Home</a></button>
+
 </div>
 <script>
   const addButon = document.querySelector(".addFolder");
   const dirDisplay = document.querySelector("#currDir");
   const folderSpan = document.querySelector("h3.title span");
-  const titleForm = document.querySelector(".titleForm");
   const newNameInput = document.querySelector('input[name="newName"]');
-  
+  const titleForm = document.querySelector(".titleForm");
   addButon.addEventListener("click", async (event) => {
     event.preventDefault();
     try {
       const folderId = "<%= folder.id %>";
-      const rawTemplate = `<li><%- include('folderForm'); %></li>`;
-
+      const rawTemplate = `<%- include('folderForm') %>`;
       dirDisplay.insertAdjacentHTML("beforeend", rawTemplate);
+
+      const thisForm = dirDisplay.querySelector("li:has(.newFolderForm)")
+      thisForm.querySelector(".cancel").addEventListener("click", (event) => {
+        event.preventDefault();
+        thisForm.remove();
+      });
     } catch (error) {
       console.error('Error rendering template:', error);
     }
@@ -57,6 +65,4 @@
     newNameInput.focus()
     event.stopPropagation();
   })
-
-
 </script>

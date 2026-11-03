@@ -1,4 +1,11 @@
-    <form action="/file/<%= folder.id %>/new" method="post" enctype="multipart/form-data">
-      <input type="file" name="file" />
-      <button type="submit">Submit File</button>
-    </form>
+<form class="fileForm" action="/file/<%= folder.id %>/new" method="post" enctype="multipart/form-data">
+  <input type="file" name="file"/>
+  <button type="submit" hidden>Submit File</button>
+</form>
+<script>
+  const form = document.querySelector(".fileForm");
+  form.querySelector('input[type="file"]').addEventListener("change", (event) => {
+    const button = document.createElement("button")
+    form.querySelector('button[type="submit"]').hidden = false
+  })
+</script>

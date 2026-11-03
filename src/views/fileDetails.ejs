@@ -3,31 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css">
     <title><%= fileInfo.name %></title>
   </head>
   <body>
     <% if (locals.fileInfo) { %>
     <h1>File Information</h1>
     <ul>
-      <li>Name: <%= fileInfo.name %></li>
+      <li>
+        <form class="fileNameRename" action="/file/<%= fileInfo.id %>" method="post">
+          Name: <span title="click to rename"><%= fileInfo.name %></span>
+          <input hidden type="text" name="newName" value="<%= fileInfo.name %>">
+        </form>
+      </li>
       <li>File Type: <%= fileInfo.mimetype.split('/')[1] %></li>
       <li>Size (Byte): <%= fileInfo.size %></li>
       <li>Owner: <%= ownerName %></li>
     </ul>
-    <form action="/file/<%= fileInfo.id %>/download" method="get">
-      <button type="submit">Download</button>
-    </form>
-    <form action="/file/<%= fileInfo.id %>/delete" method="post">
-      <button
-        type="submit"
-        onclick="
-          return confirm(
-            'WARNING: Deleting this file is NOT recoverable. Sure to delete?',
-          );
-        "
-      >
-        Delete
+    <div class="fileButtons">
+      <form action="/file/<%= fileInfo.id %>/download" method="get">
+        <button type="submit">Download File</button>
+      </form>
+      <form action="/file/<%= fileInfo.id %>/delete" method="post">
+        <button
+          type="submit"
+          onclick="
+            return confirm(
+              'WARNING: Deleting this file is NOT recoverable. Sure to delete?',
+            );
+          "
+        > Delete File
       </button>
+    </div>
     </form>
     <button>
       <a href="/folder/<%= fileInfo.folderId %>">Back to Folder</a>
@@ -38,3 +45,21 @@
     <% } %>
   </body>
 </html>
+<script>
+  const renameForm = document.querySelector(".fileNameRename");
+  const fileNameSpan = renameForm.querySelector("span");
+  console.log(fileNameSpan)
+  const newNameInput = renameForm.querySelector('input[name="newName"]');
+
+  document.addEventListener("click", () => {
+    fileNameSpan.hidden = false;
+    newNameInput.hidden = true;
+  })
+
+  fileNameSpan.addEventListener("click", () => {
+    fileNameSpan.hidden = true;
+    newNameInput.hidden = false;
+    newNameInput.focus()
+    event.stopPropagation();
+  })
+</script>

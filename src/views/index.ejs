@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Message Board</title>
+  <title>File Uploader</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -10,7 +10,10 @@
     <h1>Welcome Back, <%= user.firstName %> <%= user.lastName %>!</h1>
     <%- include("partials/folderList", { folder: currFolder }) %>
     <%- include("partials/fileSubmitForm", { folder: currFolder }) %>
-    <a href="/log-out">LOG OUT</a>
+    <div class="navLinks">
+      <a href="/">Back Home</a>
+      <a href="/log-out">LOG OUT</a>
+    </div>
   <% } else { %>
     <h1>Error: You were not authenticated</h1>
     <a href="/login">Back to Login</a>

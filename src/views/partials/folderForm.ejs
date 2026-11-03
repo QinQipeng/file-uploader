@@ -1,4 +1,11 @@
-<form class="newFolderForm" action="/folder/<%= locals.folder.id %>/new" method="post">
-  <input type="text" name="newName" value="New Folder" />
-  <button type="submit">Add</button>
-</form>
+<li>
+  <form
+    class="newFolderForm"
+    action="/folder/<%= locals.folder.id %>/new"
+    method="post"
+  >
+    <input type="text" name="newName" value="New Folder" />
+    <button type="submit">Add</button>
+    <button class="cancel">Cancel</button>
+  </form>
+</li>

@@ -12,3 +12,46 @@
   display: flex;
   justify-content: space-between;
 }
+
+.folderButtons,
+.fileButtons {
+  display: flex;
+  gap: 1rem
+}
+
+.folderButtons > form,
+.fileButtons > form {
+  display: flex;
+  align-items: stretch;
+  width: fit-content;
+}
+
+.navLinks {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+span:hover {
+  background-color: lightgray;
+  font-weight: 500;
+}
+
+.folderRename {
+  display: flex;
+  align-items: stretch;
+}
+
+.folderRename > h3{
+  margin: 0;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.folderRename input{
+  height: fit-content;
+  font-size: 1.25rem;
+  font-weight: bold;
+  field-sizing: content;
+}
