@@ -1,4 +1,5 @@
 import { User } from "../../generated/prisma/browser";
+import filesystem from "../lib/multer";
 import folderModel from "../models/folderModel";
 import { type Request, type Response, type NextFunction } from "express";
 
@@ -56,8 +57,9 @@ async function deleteFolderPost(
   if ((await folderModel.getFolderById(id))?.isRoot)
     throw new Error("Error: Deletion on Root Folder is Prohibited")
   
-  const { parentId } = await folderModel.deleteFolder(id);
-  res.redirect(`/folder/${parentId}`);
+  const deletedFolder = await folderModel.deleteFolder(id);
+  await filesystem.deleteBulk(deletedFolder.files);
+  res.redirect(`/folder/${deletedFolder.parentId}`);
 }
 
 export default {

@@ -33,6 +33,7 @@ interface FileSystem {
   storage: multer.StorageEngine;
   createFile(file: Express.Multer.File, folderName: string): Promise<NewFile>;
   deleteFile(file: SchemaFile): Promise<void>;
+  deleteBulk(files: SchemaFile[]): Promise<void>;
 }
 
 class LocalFileSystem implements FileSystem {
@@ -58,7 +59,11 @@ class LocalFileSystem implements FileSystem {
   }
 
   async deleteFile(file: SchemaFile): Promise<void> {
-    fs.unlink(file.src);
+    await fs.unlink(file.src);
+  }
+
+  async deleteBulk(files: SchemaFile[]): Promise<void> {
+    await Promise.all(files.map((file: SchemaFile) => this.deleteFile(file)))
   }
 }
 
@@ -95,7 +100,7 @@ class CloudFileSystem implements FileSystem {
           },
           (error, uploadResult) => {
             if (error) {
-              console.log(error);
+              reject(error);
             }
             const result = uploadResult;
             return resolve({
@@ -113,7 +118,19 @@ class CloudFileSystem implements FileSystem {
   }
 
   async deleteFile(file: SchemaFile): Promise<void> {
-    await cloudinary.uploader.destroy(file.id);
+    try {
+      await cloudinary.api.delete_resources_by_asset_ids([file.id], { invalidate: true });
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async deleteBulk(files: SchemaFile[]): Promise<void> {
+    try {
+      await cloudinary.api.delete_resources_by_asset_ids(files.map(file => file.id), { invalidate: true });
+    } catch (err) {
+      console.error(err)
+    }
   }
 }
 

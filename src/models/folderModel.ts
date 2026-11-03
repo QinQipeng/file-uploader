@@ -1,7 +1,7 @@
 import { PrismaClient } from "../../generated/prisma/client"
 import { DatabaseError } from "pg";
 import { prisma } from "../lib/prisma"
-import { Folder } from "../../generated/prisma/client";
+import { Folder, File } from "../../generated/prisma/client";
 
 type NewFolder = Pick<Folder, 'name' | 'ownerId'>
 
@@ -59,10 +59,11 @@ class FolderModel {
     } 
   }
 
-  async deleteFolder(folderId: string): Promise<Folder> {
+  async deleteFolder(folderId: string): Promise<Folder & { files: File[] }> {
     try {
       return await this.repo.delete({
-        where: { id: folderId }
+        where: { id: folderId },
+        include: { files: true }
       })
     } catch (err: DatabaseError | Error | unknown) {
       throw new Error(String(err))
