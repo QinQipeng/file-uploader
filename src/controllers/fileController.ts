@@ -5,9 +5,9 @@ import { Decimal } from "@prisma/client/runtime/client";
 import userModel from "../models/userModel";
 import path from "node:path";
 import multer from "multer";
-import filesystem from "../lib/multer"
+import filesystem from "../lib/multer";
 import { createInflate } from "zlib";
-
+import { Readable } from "node:stream";
 
 const upload = multer({ storage: filesystem.storage });
 
@@ -53,17 +53,20 @@ const addFilePost = [
     next: NextFunction,
   ) {
     if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
     const folderId = req.params.folderId;
     const ownerId = req.user?.id ?? "";
-
     try {
-      const newFile = await filesystem.createFile(req.file, `${req.user?.firstName} ${req.user?.lastName}`);
+      const newFile = await filesystem.createFile(
+        req.file,
+        `${req.user?.firstName} ${req.user?.lastName}`,
+      );
+      console.log(newFile);
       await fileModel.createNewFile(folderId, ownerId, newFile);
-    } catch {
-
+    } catch (err) {
+      console.error(err);
     } finally {
       res.redirect(`/folder/${folderId}`);
     }
@@ -79,14 +82,34 @@ async function downloadFileGet(
   const owns = await fileModel.checkOwnerShip(id, req.user?.id);
   if (owns) {
     const file = await fileModel.getFileById(id);
-    res.download(file?.src as string, file?.name ?? "untitled", (err) => {
-      if (err) {
-        console.error("Download failed:", err);
-        if (!res.headersSent) {
-          res.status(500).send("Could not download file");
-        }
-      }
-    });
+    if (process.env.FILESYSTEM == "cloud") {
+      const response = await fetch(file?.src as string);
+      if (!response.ok)
+        throw new Error(`Unexpected response: ${response.statusText}`);
+
+      res.setHeader(
+        "Content-Type",
+        file?.mimetype || (response.headers.get("content-type") as string),
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${file?.name}${file?.suffix}`,
+      );
+      Readable.fromWeb(response.body as ReadableStream<any>).pipe(res);
+    } else {
+      res.download(
+        file?.src as string,
+        `${file?.name ?? "untitled"}${file?.suffix}`,
+        (err) => {
+          if (err) {
+            console.error("Download failed:", err);
+            if (!res.headersSent) {
+              res.status(500).send("Could not download file");
+            }
+          }
+        },
+      );
+    }
     return;
   }
   res.redirect("/");

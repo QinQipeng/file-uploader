@@ -50,6 +50,7 @@ model File {
   ownerId  String  @db.Uuid
   folderId String  @db.Uuid
   src      String
+  mimetype String?
   folder   Folder  @relation(fields: [folderId], references: [id])
   owner    User    @relation(fields: [ownerId], references: [id])
 }

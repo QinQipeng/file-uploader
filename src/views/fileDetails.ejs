@@ -10,7 +10,7 @@
     <h1>File Information</h1>
     <ul>
       <li>Name: <%= fileInfo.name %></li>
-      <li>File Suffix: <%= fileInfo.suffix %></li>
+      <li>File Type: <%= fileInfo.mimetype.split('/')[1] %></li>
       <li>Size (Byte): <%= fileInfo.size %></li>
       <li>Owner: <%= ownerName %></li>
     </ul>

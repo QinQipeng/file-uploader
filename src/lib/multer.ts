@@ -46,8 +46,9 @@ class LocalFileSystem implements FileSystem {
     const multerMapper = (file: Express.Multer.File): NewFile => {
       return {
         id: file.filename,
-        name: path.basename(file.originalname),
+        name: path.parse(file.originalname).name,
         suffix: path.extname(file.originalname),
+        mimetype: file.mimetype,
         src: path.join(file.destination, file.filename),
         size: new Decimal(file?.size ?? 0),
       };
@@ -89,17 +90,19 @@ class CloudFileSystem implements FileSystem {
           {
             folder: `TOP File Uploader Project/${folderName}`,
             resource_type: this.getResourceType(file.mimetype),
+            display_name: path.parse(file.originalname).name,
+            format: path.extname(file.originalname)
           },
           (error, uploadResult) => {
             if (error) {
               console.log(error);
-              return reject(error);
             }
             const result = uploadResult;
             return resolve({
-              id: result?.public_id,
-              name: result?.original_filename,
-              suffix: result?.format,
+              id: result?.asset_id,
+              name: result?.display_name,
+              mimetype: file.mimetype,
+              suffix: result?.format ?? path.extname(file.originalname),
               src: result?.secure_url,
               size: Decimal(result?.bytes ?? 0),
             } as NewFile);
